@@ -22,9 +22,21 @@ void takeinput(event**, int);
 // in increasing order
 void print(event*, int);
 
-// work-in-progress
-// using bubblesort instead
-void mergesort(event**, int);
+// used by mergesort
+/* Split the nodes of the given list into front and back halves, 
+    and return the two lists using the reference parameters. 
+    If the length is odd, the extra node should go in the front list. 
+    Uses the fast/slow pointer strategy. */
+void frontbacksplit(event*, event**, event**);
+
+// used by mergesort
+/* recursively merge 2 linkedlists sorted in increasing order */
+event* sortedmerge(event*, event*);
+
+/* Merge-Sort Algorithm to sort linked-list in 
+   increasing order .
+   Takes pointer to head of the linked-list */
+void mergesort(event**);
 
 // simple bubble sort algorithm on linked list
 // arrange in increasing order according to importance
@@ -33,18 +45,18 @@ void bubblesort(event**, int);
 int main(){
     event **head; // it's head of all heads (array of heads of linked-list)
     head = (event**)malloc(N * sizeof(event*)); // array of heads of size N
-    for(int i=0; i<N; i++)
+    for (int i=0; i<N; i++)
         head[i] = NULL; // initialize the pointers to null
     int n; // company-ID in input
-    while(1){
-        if(scanf("%d", &n) != 1) break;
+    while (1) {
+        if (scanf("%d", &n) != 1) break;
         takeinput(head, n); // only take company-ID , leave others to the function
     }
-    for(int i=0; i<N; i++){
-        if(head[i] == NULL)
+    for (int i=0; i<N; i++) {
+        if (head[i] == NULL)
             continue;
-        //mergesort(head, i);
-        bubblesort(head, i); // sort all events ac to importance
+        mergesort(&head[i]); 
+        // bubblesort(head, i); // we have mergesort now
         print(head[i], i); // print importance and ID
     }
     return 0;
@@ -59,39 +71,99 @@ void takeinput(event **head, int n){
 
 void print(event *head, int n){
     printf("%d", n);
-    while(head != NULL){
+    while (head != NULL) {
         printf(" %.3f", head->imp);
         head = head->next;
     }
     printf("\n");
 }
 
-/* void mergesort(event **head, int n){
+void frontbacksplit(event* source, event** front, event** back){
+    event *fast;
+    event *slow;
+    slow = source;
+    fast = source->next;
+    
+    /* Advanced 'fast' two nodes, and advanced "slow" one node */
+    while (fast != NULL) {
+        fast = fast->next;
+        if (fast != NULL) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+    
+    /* 'slow' is before the midpoint in the list, 
+      so split in two at that point. */
+    *front = source;
+    *back = slow->next;
+    slow->next = NULL;
+}
 
-}*/
+event* sortedmerge(event* a, event* b){
+    event* result = NULL;
+    
+    /* Base cases */
+    if (a == NULL)
+        return (b);
+    else if (b == NULL)
+        return (a);
+    
+    /* Pick either a or b, and recur */
+    if (a->imp <= b->imp) {
+        result = a;
+        result->next = sortedmerge(a->next, b);
+    }
+    else {
+        result = b;
+        result->next = sortedmerge(a, b->next);
+    }
+    return (result);
+}
+
+void mergesort(event **headref){
+    event *head = *headref;
+    event *a;
+    event *b;
+    
+    /* Base Cases -- length 0 or 1 */
+    if ((head == NULL) || (head->next == NULL))
+        return ;
+    
+    /* Split head into 'a' and 'b' sublists */
+    frontbacksplit(head, &a, &b);
+    
+    /* Recursively sort the sublists */
+    mergesort(&a);
+    mergesort(&b);
+    
+    /* answer = merge the two sorted lists together */
+    *headref = sortedmerge(a, b);
+}
 
 void bubblesort(event **head, int n){
     event *last = NULL;
     event *p0, *p1, *p2, *tmp;
-    while(1){
+    while (1) {
         p0 = NULL;
         p1 = head[n];
         p2 = head[n]->next;
-        if(last == p2)
+        if (last == p2)
             break;
-        while(1){
-            if(p2 == last){
+        while (1) {
+            if (p2 == last) {
                 last = p1;
                 break;
             }
-            if(p1->imp > p2->imp){
-                if(p0 == NULL){
+            if (p1->imp > p2->imp) {
+                if (p0 == NULL) {
                     head[n] = p2;
                     tmp = p2->next;
                     p2->next = p1;
                     p1->next = tmp;
                     p0 = head[n];
-                }else{
+                }
+                else {
                     p0->next = p2;
                     tmp = p2->next;
                     p2->next = p1;
@@ -99,7 +171,8 @@ void bubblesort(event **head, int n){
                     p0 = p2;
                 }
                 p2 = p1->next;
-            }else{
+            }
+            else {
                 p0 = p1;
                 p1 = p2;
                 p2 = p2->next;
