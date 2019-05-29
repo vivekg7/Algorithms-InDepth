@@ -8,7 +8,7 @@
 #include<stdlib.h>
 #include<time.h>
 
-int N = 100000;
+int N = 100000; // 1 million
 
 int main(){
     float imp;

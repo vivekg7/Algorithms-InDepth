@@ -1,7 +1,8 @@
 /* Direct the output of event_sched.c to a file
  * I can check If the output was correct or not
  * Use linux Terminal
- * if wrong output would be 'N'*/
+ * if wrong output would be 'N'
+ * */
 
 #include<stdio.h>
 #include<stdlib.h>
