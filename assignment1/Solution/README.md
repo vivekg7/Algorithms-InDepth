@@ -5,7 +5,8 @@ test.c is capable of creating test case of size in millions and bigger.
 check.c is capable of checking the correctness of code event_shed.c 
 on the test cases.
 
-a hint:
+HINT :-
+
     ./test.out > case.txt 
 
     ./event_sched.out < case.txt > output.txt 
