@@ -6,8 +6,11 @@ check.c is capable of checking the correctness of code event_shed.c
 on the test cases.
 
 a hint:
-    ./test.out > case.txt
-    ./event_sched.out < case.txt > output.txt
+    ./test.out > case.txt 
+
+    ./event_sched.out < case.txt > output.txt 
+
     ./check.out < output.txt
+
 
     assuming *.c compiled as *.out
